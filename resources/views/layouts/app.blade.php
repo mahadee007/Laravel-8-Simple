@@ -64,8 +64,38 @@
     @livewireScripts
 
     <script type="text/javascript">
+
     $(function() {
-        var table = $('.datatable').DataTable({
+        //department
+        var table = $('.datatable-department').DataTable({
+            processing: false,
+            serverSide: false,
+            ajax: "{{ route('department') }}",
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
+                {
+                    data: 'departments_name',
+                    name: 'departments_name'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+    });
+    $(function() {
+        //user
+        var table = $('.datatable-users').DataTable({
             processing: false,
             serverSide: false,
             ajax: "{{ route('users.index') }}",
@@ -82,6 +112,10 @@
                     name: 'email'
                 },
                 {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
@@ -92,6 +126,10 @@
     });
     </script>
     <script type="text/javascript">
+
+
+    //user
+
     $(document).ready(function() {
         $(".btn-submit").click(function(e) {
             e.preventDefault();
@@ -121,12 +159,12 @@
                     name: name
                 },
                 success: function(data) {
-                    printMsg(data);
+                    printMsgUser(data);
                 }
             });
         });
 
-        function printMsg(msg) {
+        function printMsgUser(msg) {
             if ($.isEmptyObject(msg.error)) {
                 console.log(msg.success);
                 $('.alert-block').css('display', 'block').append('<strong>' + msg.success + '</strong>');
@@ -188,6 +226,143 @@
         }
 
     }
+
+
+
+    //department
+
+    $(document).ready(function() {
+        $(".btn-submit-department").click(function(e) {
+            e.preventDefault();
+
+            var _token = $("input[name='_token']").val();
+            var departments_name = $("#departments_name").val();
+            if (departments_name == '') {
+                $('#validateNameAdd').html('The name field is required.').css('color', 'red')
+            } else {
+                $('#validateNameAdd').html('')
+            }
+
+            $.ajax({
+                url: "{{ route('department.adddepartment') }}",
+                type: 'POST',
+                data: {
+                    _token: _token,
+                    departments_name: departments_name
+                },
+                success: function(data) {
+                    printMsgAdd(data);
+                }
+            });
+        });
+
+        
+        function printMsgAdd(msg) {
+            if ($.isEmptyObject(msg.error)) {
+                console.log(msg.success);
+                $('.alert-add-block').css('display', 'block').append('<strong>' + msg.success + '</strong>');
+            } else {
+                $('.alert-add-block').css('display', 'block').append('<strong>' + msg.error + '</strong>');
+                $.each(msg.error, function(key, value) {
+                    $('.' + key + '_err').text(value);
+                });
+            }
+        }
+    })
+
+
+
+
+    $(document).ready(function() {
+        $(".btn-submit-department").click(function(e) {
+            e.preventDefault();
+
+            var _token = $("input[name='_token']").val();
+            var departments_name = $("#departments_name").val();
+            var id = $("#id").val();
+            if (departments_name == '') {
+                $('#validateName').html('The name field is required.').css('color', 'red')
+            } else {
+                $('#validateName').html('')
+            }
+
+            $.ajax({
+                url: "{{ route('department.Save') }}",
+                type: 'POST',
+                data: {
+                    _token: _token,
+                    id: id,
+                    departments_name: departments_name
+                },
+                success: function(data) {
+                    printMsgUser(data);
+                }
+            });
+        });
+
+        function printMsgUser(msg) {
+            if ($.isEmptyObject(msg.error)) {
+                console.log(msg.success);
+                $('.alert-block').css('display', 'block').append('<strong>' + msg.success + '</strong>');
+            } else {
+                $('.alert-block').css('display', 'block').append('<strong>' + msg.error + '</strong>');
+                $.each(msg.error, function(key, value) {
+                    $('.' + key + '_err').text(value);
+                });
+            }
+        }
+    });
+
+    function Del_department(id) {
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this imaginary file!",
+            type: "error",
+            showCancelButton: true,
+            dangerMode: true,
+            cancelButtonClass: '#DD6B55',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Delete!',
+        }, function(result) {
+            if (result) {
+
+                var _token = $("meta[name='csrf-token']").attr('content');
+                var _id = id;
+
+                $('.odd').addClass('Del-' + _id);
+                $.ajax({
+                    url: "{{ route('department.Del') }}",
+                    type: 'POST',
+                    data: {
+                        _token: _token,
+                        _thisid: _id
+                    },
+                    success: function(data) {
+                        printDel_dpartment(data);
+                    }
+                });
+
+            }
+        })
+    }
+
+    function printDel_dpartment(msg) {
+        if ($.isEmptyObject(msg.error)) {
+            console.log(msg.success);
+            $('.Delalert-block').css('display', 'block').append('<strong>' + msg.success + '</strong>');
+           
+            setTimeout(function(){
+                
+                location.reload(true);
+                
+                },1000);
+
+        } else {
+            $('.Delalert-block').css('display', 'block').append('<strong>' + msg.error + '</strong>');
+        }
+
+    }
+
     </script>
 </body>
 

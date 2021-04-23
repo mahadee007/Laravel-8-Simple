@@ -100,6 +100,10 @@
                                 {{ __('Profile') }}
                             </x-jet-dropdown-link>
 
+                            <x-jet-dropdown-link href="{{ route('department') }}">
+                                {{ __('Department') }}
+                            </x-jet-dropdown-link>
+
                             <x-jet-dropdown-link href="{{ route('users.index') }}">
                                 {{ __('User') }}
                             </x-jet-dropdown-link>

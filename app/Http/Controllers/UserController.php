@@ -18,11 +18,15 @@ class UserController extends Controller
                         $btn = '<a href="/Edit/'.$row->id.'"  class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition"> <i class="fas fa-pencil-alt"></i> &nbsp;Edit</a> &nbsp;  <a href="javascript:void(0)" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition btn-submit-Del idattr-'.$row->id.' " atrr-id="'.$row->id.'"  data-id='.$row->id.' onclick="return Del('.$row->id.')"  > <i class="fas fa-trash"></i> &nbsp; Delete</a>';
                         return $btn;
                     })
+                    ->addColumn('created_at', function($row){
+                        return $row->created_at->diffForHumans();
+                    })
                     ->rawColumns(['action'])
                     ->make(true);
         }
         $data = [
-            'Edit'=>0
+            'Edit'=>0,
+            'Usercount'=> User::latest()->get()
         ];
         return view('user',$data);
     }
@@ -45,7 +49,8 @@ class UserController extends Controller
         $userEdit = User::where('id','=',$id)->first();
         $data = [
             'EditUser' => $userEdit,
-            'Edit'=>1
+            'Edit'=>1,
+            'Usercount'=> User::latest()->get()
         ];
 
         return view('user',$data);
@@ -69,19 +74,18 @@ class UserController extends Controller
             );
             if($userQuery){
 
-            return response()->json(['success'=>'Added new records.']);
+            return response()->json(['success'=>'update  records.']);
 
             }else{
 
-            return response()->json(['error'=>'Added new records error.']); 
+            return response()->json(['error'=>'update  records error.']); 
 
             }
         }else{
-            return response()->json(['error'=>'121']); 
+            return response()->json(['error'=>'update  records error.']); 
         }
 
-        return response()->json(['error'=>'121']);
-        // return view('user',$data);
+        return response()->json(['error'=>'update  records error.']);
     }
     
 
